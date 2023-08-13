@@ -5,13 +5,13 @@ const {getTopFavouriteMoviesAmongFriends,getTopTreeMoviesAndOrderThemAlphabetica
 
 
 const register = async (email) => {
+
+  if(!email)  throw new Error("required Id")
   const userId = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
  
   const user = await User.create({email:email,userId:userId});
   
-  if (!user) {
-    throw new Error('Register failed ');
-  }
+  if (!user)  throw new Error('Register failed ');
   return {
     user,
   };

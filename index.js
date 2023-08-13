@@ -5,9 +5,10 @@ require('dotenv').config();
 
 const mongoUrl = process.env.MONGO_URL;
 const PORT = process.env.PORT;
-mongoose.connect(mongoUrl)
-.then(()=>console.log('connected'))
-.catch((error)=>console.log(error));
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
 
 const app = express();
 
@@ -22,5 +23,15 @@ app.use('*', (req, res, next) => {
 
   return next(error);
 });
+app.use((error, req, res, next) => {
+  if (error.message === 'Authentication failed ') error.statusCode = 401;
+  if (!error.statusCode) error.statusCode = 500;
+  return res
+    .status(error.statusCode)
+    .json({ error: error.toString() });
+});
+
 
 app.listen(PORT, () => { console.log(`UP : localhost:${PORT}`); });
+
+module.exports = app;
